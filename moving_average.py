@@ -2,6 +2,7 @@ import numpy as np
 from scipy.io import wavfile
 from ssqueezepy import ssq_cwt
 import matplotlib.pyplot as plt
+from mpl_toolkits.mplot3d import Axes3D
 import sys
 
 # Get wavelet from .wav file
@@ -30,10 +31,10 @@ def wavelet_to_moving_average(matrix, window):
     return ma
 
 # Plot a chosen row in the matrix
-def plot_row(title, matrix, row):
+def plot_row(matrix, row, ax, c):
     get = matrix[row]
-    plt.plot(get)
-    plt.title(title)
+    for i in range(5):
+        ax.plot(np.array([i]*len(get)), np.arange(len(get)), get, c=c)
 
 if __name__ == '__main__':
     if len(sys.argv) != 3:
@@ -46,6 +47,12 @@ if __name__ == '__main__':
 
     wavelet = wav_to_wavelet(wav_file)
     ma = wavelet_to_moving_average(wavelet, window)
-    plot_row('', ma, row)
-    plot_row(f'Row {row} - Orange=source, Blue=averaged({window})', wavelet, row)
+
+    # Plot wave -------------------------------------------------------------
+    fig = plt.figure()  
+    ax = fig.gca(projection='3d')
+
+    plot_row(wavelet, row, ax, 'orange')
+    plot_row(ma, row, ax, 'b')
+    ax.set_title(f'Row {row} - Orange=source, Blue=averaged({window})')
     plt.show()
