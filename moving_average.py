@@ -50,7 +50,7 @@ if __name__ == '__main__':
 
     # Plot wave -------------------------------------------------------------
     fig = plt.figure()  
-    ax = fig.gca(projection='3d')
+    ax = fig.add_subplot(projection='3d')
 
     plot_row(wavelet, row, ax, 'orange')
     plot_row(ma, row, ax, 'b')
