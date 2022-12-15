@@ -2,6 +2,7 @@ import numpy as np
 from scipy.io import wavfile
 from ssqueezepy import ssq_cwt
 import matplotlib.pyplot as plt
+from mpl_toolkits.mplot3d import Axes3D
 from sklearn.preprocessing import MinMaxScaler
 import sys
 
@@ -48,38 +49,46 @@ def wavelet_to_moving_average(matrix, window):
             ma = np.concatenate((ma, i), axis=0)
     return ma
 
-def stairway(value, max_excursion, steps, row):
-    '''
-    value: wavelet
-    max_excursion: highest chosen value in stairway
-    steps: number of bins
-    '''
-    window = len(value) + 1 - max_excursion
-    ma = wavelet_to_moving_average(value, window)
-    get = ma[row]
-    bins = np.linspace(np.min(get), np.max(get), steps)
 
-    # Compute the histogram of a dataset.
-    hist, bins = np.histogram(get, bins = bins)
-    # plt.stairs(hist, bins)
-    return hist, bins
+def stairway(ma_row, bins, max_excursion):
+    '''
+    ma_row: a chosen row of MA
+    bins: number of bins
+    max_excursion: max chosen number for histogram
+
+    Note:
+    - Purpose: Get index according to each range 
+    - for example: '0 for range 0...249, 1 for 250...499, 2 for 500...749, 3 for 750... infinit
+    '''
+    range_ = np.linspace(0, max_excursion, bins).tolist()
+    min_ma = np.min(ma_row)
+    max_ma = np.max(ma_row)
     
+    if max_ma > range_[-1]:
+        range_[-1] = max_ma
+    pair_ = [range_[i:i+2] for i in range(bins-1)]
+
+    ma_hist = []
+    for va in ma_row:
+        for each_pair in pair_:
+            if each_pair[0] < va < each_pair[1]:
+                ma_hist.append(pair_.index(each_pair)) 
+    
+    # scaling histogram
+    ma_hist = np.array(ma_hist)
+    ma_hist = ma_hist.reshape(-1, 1)
+    scaler = MinMaxScaler(feature_range=(min_ma, max_ma))
+    ma_hist = scaler.fit_transform(ma_hist)
+    ma_hist = ma_hist.reshape(-1, )
+    return ma_hist    
 
 # Plot a chosen row in the matrix
-def plot_row(row, ax, c, matrix=None, option=None, bins=None, hist=None):
+def plot_row(row, ax, c, matrix=None, option=None, hist=None, width=None):
     if np.max(matrix) != None:
         get = matrix[row]
 
-    if option == 'hist':
-        # scaling bins to horizon range of MA
-        bins = np.linspace(0, matrix.shape[-1], row)
-
-        # # scaling hist by min and max value of MA
-        # min_, max_ = np.min(get), np.max(get)
-        # hist = scaler(hist, min_, max_ )
-
-        # plot histogram
-        ax.hist(bins[:-1], bins, weights=hist, color='g')
+    if np.max(hist) != None:
+        ax.plot(hist, c=c)
     else:
         ax.plot(get, c=c)
 
@@ -91,20 +100,20 @@ if __name__ == '__main__':
     wav_file = sys.argv[1]
     row = int(sys.argv[2])
     window = 1000
-    max_excursion = 25000
-    steps = 10
+    max_excursion = 20
+    bins = 10
 
     # computing part -------------------------------------------------------
     wavelet = wav_to_wavelet(wav_file)
     ma = wavelet_to_moving_average(wavelet, window)
-    hist, bins = stairway(wavelet, max_excursion, steps, row)
+    ma_hist = stairway(ma[row], bins, max_excursion)
 
     # Plot part -------------------------------------------------------------
     fig = plt.figure()  
     ax = fig.add_subplot()
-    # plot_row(row, ax, 'orange', matrix=wavelet)
-    # plot_row(row, ax, 'b', matrix=ma)
-    plot_row(row, ax, 'g', matrix=ma, option='hist', bins=bins, hist=hist)
+    plot_row(row, ax, 'orange', matrix=wavelet)
+    plot_row(row, ax, 'b', matrix=ma)
+    plot_row(row, ax, 'g', hist=ma_hist, width=0.4)
 
     ax.set_title(f'Row {row} - Orange=source, Blue=averaged({window}), Green=histogram')
     plt.show()
