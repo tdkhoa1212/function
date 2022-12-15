@@ -74,9 +74,9 @@ def plot_row(row, ax, c, matrix=None, option=None, bins=None, hist=None):
         # scaling bins to horizon range of MA
         bins = np.linspace(0, matrix.shape[-1], row)
 
-        # scaling hist by min and max value of MA
-        min_, max_ = np.min(get), np.max(get)
-        hist = scaler(hist, min_, max_ )
+        # # scaling hist by min and max value of MA
+        # min_, max_ = np.min(get), np.max(get)
+        # hist = scaler(hist, min_, max_ )
 
         # plot histogram
         ax.hist(bins[:-1], bins, weights=hist, color='g')
@@ -102,8 +102,8 @@ if __name__ == '__main__':
     # Plot part -------------------------------------------------------------
     fig = plt.figure()  
     ax = fig.add_subplot()
-    plot_row(row, ax, 'orange', matrix=wavelet)
-    plot_row(row, ax, 'b', matrix=ma)
+    # plot_row(row, ax, 'orange', matrix=wavelet)
+    # plot_row(row, ax, 'b', matrix=ma)
     plot_row(row, ax, 'g', matrix=ma, option='hist', bins=bins, hist=hist)
 
     ax.set_title(f'Row {row} - Orange=source, Blue=averaged({window}), Green=histogram')

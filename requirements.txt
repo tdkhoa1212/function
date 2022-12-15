@@ -4,3 +4,4 @@ ssqueezepy
 matplotlib
 pyqt5
 ipympl
+sklearn
