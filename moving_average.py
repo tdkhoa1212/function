@@ -82,7 +82,7 @@ def stairway(ma_row, bins, max_excursion):
     ma_hist = ma_hist.reshape(-1, )
     return ma_hist    
 
-# Plot a chosen row in the matrix
+# Plot all visualizations
 def plot_row(row, ax, c, matrix=None, option=None, hist=None, width=None):
     if np.max(matrix) != None:
         get = matrix[row]
@@ -106,7 +106,7 @@ if __name__ == '__main__':
     # computing part -------------------------------------------------------
     wavelet = wav_to_wavelet(wav_file)
     ma = wavelet_to_moving_average(wavelet, window)
-    ma_hist = stairway(ma[row], bins, max_excursion)
+    ma_hist = stairway(wavelet_to_moving_average(wavelet, window)[row], bins, max_excursion)
 
     # Plot part -------------------------------------------------------------
     fig = plt.figure()  
