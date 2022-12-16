@@ -6,6 +6,10 @@ from sklearn.preprocessing import MinMaxScaler
 import sys
 
 def scaler(array, min_, max_):
+    '''
+    array: input
+    min_, max_: range of scaling
+    '''
     array = array.reshape((-1, 1))
     scaler = MinMaxScaler(feature_range=(min_, max_))
     s_data = scaler.fit_transform(array)
