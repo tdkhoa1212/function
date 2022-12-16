@@ -50,45 +50,12 @@ def wavelet_to_moving_average(matrix, window):
             ma = i
         else:
             ma = np.concatenate((ma, i), axis=0)
-    return ma
+    return ma 
 
-
-def stairway(ma_row, bins, max_excursion):
-    '''
-    ma_row: a chosen row of MA
-    bins: number of bins
-    max_excursion: max chosen number for histogram
-
-    Note:
-    - Purpose: Get index according to each range 
-    - for example: '0 for range 0...249, 1 for 250...499, 2 for 500...749, 3 for 750... infinit
-    '''
-    range_ = np.linspace(0, max_excursion, bins).tolist()
-    min_ma = np.min(ma_row)
-    max_ma = np.max(ma_row)
-    
-    if max_ma > range_[-1]:
-        range_[-1] = max_ma
-    pair_ = [range_[i:i+2] for i in range(bins-1)]
-
-    ma_hist = []
-    for va in ma_row:
-        for each_pair in pair_:
-            if each_pair[0] < va < each_pair[1]:
-                ma_hist.append(pair_.index(each_pair)) 
-    
-    # scaling histogram
-    ma_hist = np.array(ma_hist)
-    ma_hist = ma_hist.reshape(-1, 1)
-    scaler = MinMaxScaler(feature_range=(min_ma, max_ma))
-    ma_hist = scaler.fit_transform(ma_hist)
-    ma_hist = ma_hist.reshape(-1, )
-    return ma_hist   
-
-# def stairway(ma_row, bin_count, max_excursion):
-#     bins = np.linspace(0, max_excursion, bin_count)
-#     dig = np.digitize(ma_row, bins) * (max_excursion / bin_count)
-#     return dig 
+def stairway(ma_row, bin_count, max_excursion):
+    bins = np.linspace(0, max_excursion, bin_count)
+    dig = (np.digitize(ma_row, bins) - 1) * (max_excursion / bin_count)
+    return dig 
 
 # Plot all visualizations
 def plot_row(row, ax, c, matrix=None, option=None, hist=None, width=None):
@@ -96,9 +63,12 @@ def plot_row(row, ax, c, matrix=None, option=None, hist=None, width=None):
         get = matrix[row]
 
     if np.max(hist) != None:
-        ax.plot(hist, c=c)
+        z = hist
     else:
-        ax.plot(get, c=c)
+        z = get
+    x = np.array([1]*len(z))
+    y = np.arange(len(z))
+    ax.plot(x, y, z, c=c)
 
 if __name__ == '__main__':
     if len(sys.argv) != 3:
@@ -118,9 +88,9 @@ if __name__ == '__main__':
 
     # Plot part -------------------------------------------------------------
     fig = plt.figure()  
-    ax = fig.add_subplot()
-    plot_row(row, ax, 'orange', matrix=wavelet)
-    plot_row(row, ax, 'b', matrix=ma)
+    ax = fig.add_subplot(projection='3d')
+    plot_row(row, ax, 'bisque', matrix=wavelet)
+    plot_row(row, ax, 'lightsteelblue', matrix=ma)
     plot_row(row, ax, 'g', hist=ma_hist, width=0.4)
 
     ax.set_title(f'Row {row} - Orange=source, Blue=averaged({window}), Green=histogram')
