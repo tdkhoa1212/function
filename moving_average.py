@@ -53,6 +53,11 @@ def wavelet_to_moving_average(matrix, window):
     return ma 
 
 def stairway(ma, bin_count, max_excursion=None):
+    '''
+    ma: Moving average matrix
+    bin_count: number of bins
+    max_excursion: the upper limit of all_dig output
+    '''
     all_dig = []
     for ma_row in ma:
         max_excursion = ma_row.max()
@@ -72,14 +77,19 @@ def plot_row(row, ax, c, matrix=None, hist=None):
     ax.plot(x, y, z, c=c)
 
 if __name__ == '__main__':
-    if len(sys.argv) != 3:
-        print('Usage: python moving_average.py <path to wav file> <row number>')
+    # if len(sys.argv) != 3:
+    #     print('Usage: python moving_average.py <path to wav file> <row number>')
+    #     sys.exit(-1)
+    if len(sys.argv) != 2:
+        print('Usage: python moving_average.py <path to wav file>')
         sys.exit(-1)
 
     wav_file = sys.argv[1]
-    row = int(sys.argv[2])
+    # row = int(sys.argv[2])
     window = 1000
     bins = 10
+    low_row = 150
+    up_row = 170
 
     # computing part -------------------------------------------------------
     wavelet = wav_to_wavelet(wav_file)
@@ -89,10 +99,13 @@ if __name__ == '__main__':
     # Plot part -------------------------------------------------------------
     fig = plt.figure()  
     ax = fig.add_subplot(projection='3d')
-    for each_r in range(150, 170):
+    for each_r in range(low_row, up_row):
         # plot_row(each_r, ax, 'bisque', matrix=wavelet)
         plot_row(each_r, ax, 'lightsteelblue', matrix=ma)
         plot_row(each_r, ax, 'g', hist=ma_hist)
 
-    ax.set_title(f'Row {row} - Orange=source, Blue=averaged({window}), Green=histogram')
+    ax.set_title(f'Row {low_row}->{up_row} - Orange=source, Blue=averaged({window}), Green=histogram', fontsize=10)
+    ax.set_xlabel('Frequency index')
+    ax.set_ylabel('Samples')
+    ax.set_zlabel('Frequency value')
     plt.show()
