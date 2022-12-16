@@ -52,21 +52,22 @@ def wavelet_to_moving_average(matrix, window):
             ma = np.concatenate((ma, i), axis=0)
     return ma 
 
-def stairway(ma_row, bin_count, max_excursion):
-    bins = np.linspace(0, max_excursion, bin_count)
-    dig = (np.digitize(ma_row, bins) - 1) * (max_excursion / bin_count)
-    return dig 
+def stairway(ma, bin_count, max_excursion=None):
+    all_dig = []
+    for ma_row in ma:
+        max_excursion = ma_row.max()
+        bins = np.linspace(0, max_excursion, bin_count)
+        dig = (np.digitize(ma_row, bins) - 1) * (max_excursion / bin_count)
+        all_dig.append(dig.tolist())
+    return np.array(all_dig) 
 
 # Plot all visualizations
-def plot_row(row, ax, c, matrix=None, option=None, hist=None, width=None):
-    if np.max(matrix) != None:
-        get = matrix[row]
-
+def plot_row(row, ax, c, matrix=None, hist=None):
     if np.max(hist) != None:
-        z = hist
+        z = hist[row]
     else:
-        z = get
-    x = np.array([1]*len(z))
+        z = matrix[row]
+    x = np.array([row]*len(z))
     y = np.arange(len(z))
     ax.plot(x, y, z, c=c)
 
@@ -78,20 +79,20 @@ if __name__ == '__main__':
     wav_file = sys.argv[1]
     row = int(sys.argv[2])
     window = 1000
-    max_excursion = 20
     bins = 10
 
     # computing part -------------------------------------------------------
     wavelet = wav_to_wavelet(wav_file)
     ma = wavelet_to_moving_average(wavelet, window)
-    ma_hist = stairway(wavelet_to_moving_average(wavelet, window)[row], bins, max_excursion)
+    ma_hist = stairway(ma, bins)
 
     # Plot part -------------------------------------------------------------
     fig = plt.figure()  
     ax = fig.add_subplot(projection='3d')
-    plot_row(row, ax, 'bisque', matrix=wavelet)
-    plot_row(row, ax, 'lightsteelblue', matrix=ma)
-    plot_row(row, ax, 'g', hist=ma_hist, width=0.4)
+    for each_r in range(150, 170):
+        # plot_row(each_r, ax, 'bisque', matrix=wavelet)
+        plot_row(each_r, ax, 'lightsteelblue', matrix=ma)
+        plot_row(each_r, ax, 'g', hist=ma_hist)
 
     ax.set_title(f'Row {row} - Orange=source, Blue=averaged({window}), Green=histogram')
     plt.show()
