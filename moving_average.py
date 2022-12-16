@@ -2,7 +2,6 @@ import numpy as np
 from scipy.io import wavfile
 from ssqueezepy import ssq_cwt
 import matplotlib.pyplot as plt
-from mpl_toolkits.mplot3d import Axes3D
 from sklearn.preprocessing import MinMaxScaler
 import sys
 
