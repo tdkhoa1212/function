@@ -2,4 +2,4 @@
 
 Run code:
 
-    moving_average.py <path> <row>
+    moving_average.py <path> 
