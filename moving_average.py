@@ -80,7 +80,12 @@ def stairway(ma_row, bins, max_excursion):
     scaler = MinMaxScaler(feature_range=(min_ma, max_ma))
     ma_hist = scaler.fit_transform(ma_hist)
     ma_hist = ma_hist.reshape(-1, )
-    return ma_hist    
+    return ma_hist   
+
+# def stairway(ma_row, bin_count, max_excursion):
+#     bins = np.linspace(0, max_excursion, bin_count)
+#     dig = np.digitize(ma_row, bins) * (max_excursion / bin_count)
+#     return dig 
 
 # Plot all visualizations
 def plot_row(row, ax, c, matrix=None, option=None, hist=None, width=None):
