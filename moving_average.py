@@ -3,6 +3,7 @@ from scipy.io import wavfile
 from ssqueezepy import ssq_cwt
 import matplotlib.pyplot as plt
 from sklearn.preprocessing import MinMaxScaler
+from plot_3D import plot_row
 import sys
 
 def scaler(array, min_, max_):
@@ -65,16 +66,6 @@ def stairway(ma, bin_count, max_excursion=None):
         dig = (np.digitize(ma_row, bins) - 1) * (max_excursion / bin_count)
         all_dig.append(dig.tolist())
     return np.array(all_dig) 
-
-# Plot all visualizations
-def plot_row(row, ax, c, matrix=None, hist=None):
-    if np.max(hist) != None:
-        z = hist[row]
-    else:
-        z = matrix[row]
-    x = np.array([row]*len(z))
-    y = np.arange(len(z))
-    ax.plot(x, y, z, c=c)
 
 if __name__ == '__main__':
     # if len(sys.argv) != 3:

@@ -1,0 +1,33 @@
+import numpy as np
+from sklearn.neighbors import NearestCentroid
+
+def matrix_to_vectors(matrix):
+    x = np.array(matrix)
+    y = []
+    for i in x:
+        y.append(list(range(len(i))))
+    y = np.array(y).reshape(-1, )
+    return x, y
+
+def stra(matrix, dis = 50):
+    x, y = matrix_to_vectors(matrix)
+    x_list = np.array(np.arange(np.min(x), np.max(x), dis))
+    y_list = np.array(np.arange(np.min(y), np.max(y), dis))
+    x_1, y_1 = np.meshgrid(x_list, y_list)   # a grid is created by standard straighten
+
+    x_train = np.array([x_1[:, i] for i in range(x_1.shape[1])]).reshape(-1, ).astype(np.int32)
+    y_train = np.array([y_1[:, i] for i in range(y_1.shape[1])]).reshape(-1, )
+
+    y_train = np.concatenate((y_train.reshape(-1, 1), x_train.reshape(-1, 1)), axis=-1)
+
+
+    ################################### Train with ML ###################################
+    # This standard data ((y_train, x_train), x_train) is trained with a Machine Learning (ML) model(NearestCentroid). 
+    # After that, using the machine learning
+    # model predict original data ((y, x), y)
+    clf = NearestCentroid()
+    clf.fit(y_train, x_train)
+    x = clf.predict(np.concatenate((y.reshape(-1, 1), x.reshape(-1, 1)), axis=-1))
+    return x, y
+
+# def str_tensors(tensor):
