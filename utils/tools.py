@@ -3,6 +3,7 @@ from scipy.io import wavfile
 from ssqueezepy import ssq_cwt
 from sklearn.preprocessing import MinMaxScaler
 import numpy as np
+import matplotlib.pyplot as plt 
 from sklearn.neighbors import NearestCentroid
 
 # Plot all visualizations
@@ -14,6 +15,18 @@ def plot_row(row, ax, c, matrix=None, hist=None):
     x = np.array([row]*len(z))
     y = np.arange(len(z))
     ax.plot(x, y, z, c=c)
+
+def plot_3D(matrix, c=None, title=None, low_row=None, up_row=None, saved_name=None):
+        fig = plt.figure()  
+        ax = fig.add_subplot(projection='3d')
+        for each_r in range(low_row, up_row):
+            plot_row(each_r, ax, c, hist=matrix)
+            ax.set_title(title)
+            ax.set_xlabel('Frequency index')
+            ax.set_ylabel('Samples')
+            ax.set_zlabel('Frequency value')
+        plt.savefig(saved_name)
+        plt.show()
 
 def scaler(array, min_, max_):
     '''
@@ -84,7 +97,8 @@ def matrix_to_vectors(matrix):
     y = np.array(y).reshape(-1, )
     return x, y
 
-def stra(matrix, dis = 50):
+def stra(matrix, dis = 5):
+    shape = matrix.shape
     x, y = matrix_to_vectors(matrix)
     x_list = np.array(np.arange(np.min(x), np.max(x), dis))
     y_list = np.array(np.arange(np.min(y), np.max(y), dis))
@@ -103,6 +117,4 @@ def stra(matrix, dis = 50):
     clf = NearestCentroid()
     clf.fit(y_train, x_train)
     x = clf.predict(np.concatenate((y.reshape(-1, 1), x.reshape(-1, 1)), axis=-1))
-    return x, y
-
-# def str_tensors(tensor):
+    return x.reshape(shape)

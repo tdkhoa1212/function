@@ -21,6 +21,7 @@ if __name__ == '__main__':
     wavelet = wav_to_wavelet(wav_file)
     ma = wavelet_to_moving_average(wavelet, window)
     ma_hist = stairway(ma, bins)
+    print(wavelet.shape)
 
     # Plot part -------------------------------------------------------------
     fig = plt.figure()  
