@@ -1,8 +1,10 @@
 # function
 1. Install libraries:
+
     !pip install -r requirements.txt
 
 2. Run code:
+
 Plot wavelet, ma, ma_hist in the 3D space:
     python moving_average.py <path> 
 
