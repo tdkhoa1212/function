@@ -1,15 +1,5 @@
-from straight_fn import str
 from moving_average import stairway, wavelet_to_moving_average, wav_to_wavelet
-
-# Plot all visualizations
-def plot_row(row, ax, c, matrix=None, hist=None):
-    if np.max(hist) != None:
-        z = hist[row]
-    else:
-        z = matrix[row]
-    x = np.array([row]*len(z))
-    y = np.arange(len(z))
-    ax.plot(x, y, z, c=c)
+from straight_fn import str
 
 if __name__ == '__main__':
     if len(sys.argv) != 2:
