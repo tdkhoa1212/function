@@ -17,6 +17,7 @@ if __name__ == '__main__':
     low_row = 150
     up_row = 170
 
+
     # computing part -------------------------------------------------------
     wavelet = wav_to_wavelet(wav_file)
     ma = wavelet_to_moving_average(wavelet, window)
