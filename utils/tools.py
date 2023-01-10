@@ -108,8 +108,8 @@ def stra(matrix, dis = 5):
     y_train = np.array([y_1[:, i] for i in range(y_1.shape[1])]).reshape(-1, )
 
     y_train = np.concatenate((y_train.reshape(-1, 1), x_train.reshape(-1, 1)), axis=-1)
-
-
+    if len(np.unique(x_train)) < 2:
+        return matrix
     ################################### Train with ML ###################################
     # This standard data ((y_train, x_train), x_train) is trained with a Machine Learning (ML) model(NearestCentroid). 
     # After that, using the machine learning
