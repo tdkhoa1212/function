@@ -1,32 +1,38 @@
+from sklearn.neighbors import NearestCentroid
 import numpy as np
 from scipy.io import wavfile
 from ssqueezepy import ssq_cwt
-from sklearn.preprocessing import MinMaxScaler
 import numpy as np
-import matplotlib.pyplot as plt 
-from sklearn.neighbors import NearestCentroid
+import soundfile as sf
 
-# Plot all visualizations
-def plot_row(row, ax, c, matrix=None, hist=None):
-    if np.max(hist) != None:
-        z = hist[row]
-    else:
-        z = matrix[row]
-    x = np.array([row]*len(z))
-    y = np.arange(len(z))
-    ax.plot(x, y, z, c=c)
+# Get wavelet from .wav file
+def wav_to_wavelet(path, time_window=0.1):
+    '''
+    x: segment data (1D shape)
+    time_window: time in seconds (s)
+    '''
+    track = sf.SoundFile(path)
+    length = track.frames
 
-def plot_3D(matrix, c=None, title=None, low_row=None, up_row=None, saved_name=None):
-        fig = plt.figure()  
-        ax = fig.add_subplot(projection='3d')
-        for each_r in range(low_row, up_row):
-            plot_row(each_r, ax, c, hist=matrix)
-            ax.set_title(title)
-            ax.set_xlabel('Frequency index')
-            ax.set_ylabel('Samples')
-            ax.set_zlabel('Frequency value')
-        plt.savefig(saved_name)
-        plt.show()
+    can_seek = track.seekable() # To enable access to a file
+    if not can_seek:
+        raise ValueError("Not compatible with seeking")
+
+    begin = 0
+    sr = track.samplerate # sample rate
+    start_frame = sr * begin
+    sampling_window = int(time_window*sr)
+    
+    while begin < length:
+        # Read and convert .wav file to wavelet
+        track.seek(start_frame)
+        audio_section = track.read(sampling_window)
+        twx, wx, *_ = ssq_cwt(audio_section)  # use wx
+        yield np.abs(wx)
+
+        end = min(begin + sampling_window, length)
+        begin = end
+
 
 def scaler(array, min_, max_):
     '''
@@ -38,16 +44,6 @@ def scaler(array, min_, max_):
     s_data = scaler.fit_transform(array)
     s_data = np.squeeze(s_data)
     return s_data
-
-# Get wavelet from .wav file
-def wav_to_wavelet(path):
-    '''
-    path: Direction to .wav file
-    '''
-    sample_rate, x = wavfile.read(path) 
-    twx, wx, *_ = ssq_cwt(x)  # use wx
-    print(f'shape: {wx.shape}')
-    return np.abs(wx)
 
 # Moving average function
 def moving_average(array, window):
@@ -69,7 +65,7 @@ def wavelet_to_moving_average(matrix, window):
     for i in matrix:
         i = moving_average(i, window)
         i = np.expand_dims(i, axis=0)
-        if len(ma)==0:
+        if len(ma) == 0:
             ma = i
         else:
             ma = np.concatenate((ma, i), axis=0)
@@ -118,3 +114,21 @@ def stra(matrix, dis = 5):
     clf.fit(y_train, x_train)
     x = clf.predict(np.concatenate((y.reshape(-1, 1), x.reshape(-1, 1)), axis=-1))
     return x.reshape(shape)
+    
+path = 'E:/Enrico boss/function/wav/apple_and_lemmon.wav'
+window = 1000 # pooling window in MA function
+time_window=0.5
+bins = 10 # number of bins in stairway function
+dis = 200 # distance between columns in stra function
+
+def test_run():
+    for idx, wx in enumerate(wav_to_wavelet(path, time_window)):
+        if idx == 1:
+            break
+        ma_hist = stairway(wavelet_to_moving_average(wx, window), bins)
+        print(f'Shape of stair segment {idx+1}: {ma_hist.shape}')
+        ma_hist_stra = stra(ma_hist, dis = dis)
+        print(f'Shape of straight segment {idx+1}: {ma_hist_stra.shape}\n')
+
+test_run()
+
