@@ -115,7 +115,7 @@ def stra(matrix, dis = 5):
     x = clf.predict(np.concatenate((y.reshape(-1, 1), x.reshape(-1, 1)), axis=-1))
     return x.reshape(shape)
     
-path = 'E:/Enrico boss/function/wav/apple_and_lemmon.wav'
+path = 'wav/apple_and_lemmon.wav'
 window = 1000 # pooling window in MA function
 time_window=0.5
 bins = 10 # number of bins in stairway function
@@ -130,5 +130,5 @@ def test_run():
         ma_hist_stra = stra(ma_hist, dis = dis)
         print(f'Shape of straight segment {idx+1}: {ma_hist_stra.shape}\n')
 
-# test_run()
+test_run()
 
