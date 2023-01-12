@@ -8,4 +8,5 @@ scikit-learn
 networkx
 soundfile
 tracemalloc
-pip install pytest-profiling
+pytest-memray
+
