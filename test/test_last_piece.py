@@ -1,10 +1,4 @@
-from sklearn.neighbors import NearestCentroid
-import numpy as np
-from scipy.io import wavfile
-from ssqueezepy import ssq_cwt
-import numpy as np
-import soundfile as sf
-from utils.tools import wav_to_wavelet, wavelet_to_moving_average, stairway
+from tools import wav_to_wavelet, wavelet_to_moving_average, stairway, stra
     
 path = 'wav/apple_and_lemmon.wav'
 window = 1000 # pooling window in MA function
@@ -22,4 +16,3 @@ def test_run():
         print(f'Shape of straight segment {idx+1}: {ma_hist_stra.shape}\n')
 
 test_run()
-
