@@ -8,6 +8,5 @@ ipympl
 scikit-learn
 networkx
 soundfile
-tracemalloc
 pytest-memray
 
