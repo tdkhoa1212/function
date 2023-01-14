@@ -1,4 +1,4 @@
-from tools import wav_to_wavelet, wavelet_to_moving_average, stairway, stra
+from utils.tools import wav_to_wavelet, wavelet_to_moving_average, stairway, stra
     
 path = 'wav/apple_and_lemmon.wav'
 window = 1000 # pooling window in MA function
