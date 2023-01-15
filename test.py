@@ -1,5 +1,6 @@
 from utils.tools import wav_to_wavelet, wavelet_to_moving_average, stairway, stra
-    
+import numpy as np
+
 path = 'wav/apple_and_lemmon.wav'
 window = 1000 # pooling window in MA function
 time_window=0.5
@@ -11,6 +12,8 @@ def test_pieces():
         # if idx == 1:
         #     break
         ma_hist = stairway(wavelet_to_moving_average(wx, window), bins)
+        assert len(ma_hist.shape) == 2, 'output of ma_hist must be a matrix'
         print(f'Shape of stair segment {idx+1}: {ma_hist.shape}')
+
         ma_hist_stra = stra(ma_hist, dis = dis)
         print(f'Shape of straight segment {idx+1}: {ma_hist_stra.shape}\n')
