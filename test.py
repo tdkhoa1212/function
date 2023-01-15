@@ -6,7 +6,7 @@ time_window=0.5
 bins = 10 # number of bins in stairway function
 dis = 200 # distance between columns in stra function
 
-def test_run():
+def test_pieces():
     for idx, wx in enumerate(wav_to_wavelet(path, time_window)):
         # if idx == 1:
         #     break
@@ -14,5 +14,3 @@ def test_run():
         print(f'Shape of stair segment {idx+1}: {ma_hist.shape}')
         ma_hist_stra = stra(ma_hist, dis = dis)
         print(f'Shape of straight segment {idx+1}: {ma_hist_stra.shape}\n')
-
-test_run()

@@ -1,3 +1,5 @@
-results
-wav
-venv
+utils/
+wav/
+results/
+venv/
+requirements.txt
