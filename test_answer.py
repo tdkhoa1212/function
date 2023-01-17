@@ -11,7 +11,7 @@ def test_pieces():
     for idx, wx in enumerate(wav_to_wavelet(path, time_window)):
         # if idx == 1:
         #     break
-        ma_hist = stairway(wavelet_to_moving_average(wx, window), bins)
+        ma_hist = stairway(wavelet_to_moving_average(wx, window), bins) 
         assert len(ma_hist.shape) == 2, 'output of ma_hist must be a matrix'
         print(f'Shape of stair segment {idx+1}: {ma_hist.shape}')
 
