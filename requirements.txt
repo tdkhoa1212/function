@@ -10,3 +10,4 @@ networkx
 soundfile
 pytest-memray
 pytest
+psutil

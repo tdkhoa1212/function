@@ -1,28 +1,13 @@
 from utils.tools import wav_to_wavelet, wavelet_to_moving_average, stairway, stra
 import pytest
-import numpy as np
-
+import psutil
 
 # Parameter --------------------------------------------------------
-@pytest.fixture
-def path():
-    return 'wav/apple_and_lemmon.wav'
-
-@pytest.fixture
-def window():
-    return 1000 # pooling window in MA function
-
-@pytest.fixture 
-def time_window():
-    return 0.5
-
-@pytest.fixture 
-def bins():
-    return 10 # number of bins in stairway function
-
-@pytest.fixture 
-def dis():
-    return 200 # distance between columns in stra function
+path = 'wav/apple_and_lemmon.wav'
+window = 1000 # pooling window in MA function
+time_window = 0.3
+bins = 10 # number of bins in stairway function
+dis = 200 # distance between columns in stra function
 
 # Assertions --------------------------------------------------------
 def t_wx(wx, window, bins, dis):
@@ -37,16 +22,25 @@ def t_ma_hist(wx, ma_hist):
 def t_ma_hist_stra(wx, ma_hist_stra):
     assert wx.shape[0] == ma_hist_stra.shape[0], f"The number of rows in matrices must be equated, but they are {wx.shape[0]} and {ma_hist_stra.shape[0]} of wx and ma_hist_stra respectively"    
 
+def t_me(past_me, current_me):
+    assert past_me-2 < current_me < past_me+2, f"the percentage of used RAM suddently changed, past memory: {past_me}, current memory: {current_me}"
+
 @pytest.mark.xfail(raises=IndexError)
-def test_pieces(window, time_window, bins, dis, path):
+def test_pieces():
+    past_me = psutil.virtual_memory().percent
     for idx, wx in enumerate(wav_to_wavelet(path, time_window)):
         t_wx(wx, window, bins, dis)
 
+        # Test histogram ma------------------------------------------------------
         ma_hist = stairway(wavelet_to_moving_average(wx, window), bins) 
         t_ma_hist(wx, ma_hist)
         print(f'Shape of stair segment {idx+1}: {ma_hist.shape}')
 
+        # Test histogram straighted ma------------------------------------------------------
         ma_hist_stra = stra(ma_hist, dis = dis)
         t_ma_hist_stra(wx, ma_hist_stra)
         print(f'Shape of straight segment {idx+1}: {ma_hist_stra.shape}\n')
 
+        # Test memory------------------------------------------------------
+        current_me = psutil.virtual_memory().percent
+        t_me(past_me, current_me)
