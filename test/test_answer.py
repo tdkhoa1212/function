@@ -1,4 +1,4 @@
-from utils.tools import wav_to_wavelet, wavelet_to_moving_average, stairway, stra
+from utils.tools import wav_to_wavelet
 import pytest
 import psutil
 
